@@ -1,11 +1,13 @@
 # taller_db
-project for the lenguage 3
+Project for the lenguage 3, using technologis:  PostgreSQL, React, ReactNative, Vite, NodeJS, and the posible use of TypeScript
 <br><hr>
+
 ## Reglas del Proyecto:
 1. Antes de hacer cualquier cambio o trbajar con la base de datos, se debera actualizar el repositorio local (el de vuestro pc)
 2. Antes cada cambio hecho y subido en el repo se debe indicar en el commit el area donde hubo el cambio y una descripcion mas especifica (no muy grande)
 3. Antes y despues de realizar el cambio en la base de datos, tannto del repo como en SupaBase se debe hacer notiicacion a la otra parte del equipo
 4. El cumplimiento de las reglas asegurarano pisarnos la cola mutuamente, y **aplica sin excepciones**
+
 <br><hr>
 ## Flujo de Trabajo:
 El obejitivo principal de repositorio es uncionar como un control de versiones y cambios realizados en la base de datos que estara alojada en un servidor externo, permitiendo asi cada uno mantener una propia version en local de la misma y un registro de cambio mejor organizados.
