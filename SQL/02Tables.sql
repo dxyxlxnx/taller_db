@@ -15,7 +15,7 @@ CREATE TABLE users (
     phone_number VARCHAR(15),
     email VARCHAR(100) UNIQUE NOT NULL,
     state users_state NOT NULL DEFAULT 'ACTIVE',
-    first_access TIMESTAMP,
+    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_access TIMESTAMP,
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
