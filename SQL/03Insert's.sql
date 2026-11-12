@@ -107,9 +107,10 @@ INSERT INTO notification (id_service, type, destination_email, message, sent_dat
 
 COMMIT;
 
+/*
 select * from USERS --REVISION DE ATRIBUTOS DE CADA INSERT
 
 delete from catalog_service --LIMPIEZA DE LOS REGISTROS DE LA TABLA EN CASO DE SER NECESARIO
 
 ALTER TABLE catalog_service ALTER COLUMN ID RESTART WITH 1; --REINICIO DE CONTADOR DE LOS AUTOINCREMENT POR PROBLEMAS GENERADOS
-
+*/

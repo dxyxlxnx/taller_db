@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: postgres_taller
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: taller_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - taller_pgdata:/var/lib/postgresql/data
+      # Esta línea lee automáticamente todos los .sql de tu carpeta local y los ejecuta:
+      - ./SQL:/docker-entrypoint-initdb.d
+
+volumes:
+  taller_pgdata:
