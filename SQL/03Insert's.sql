@@ -12,10 +12,10 @@ INSERT INTO users (
     role_id, id_card, username, first_name, last_name, 
     password_hash, phone_number, email, state, creation_date, last_access, last_update
 ) VALUES
-    (1, 'V-15890123', 'admin_taller', 'Roberto', 'Méndez', '$2b$12$KIX/x8k1.hashSimuladoAdmin99', '0414-7001122', 'admin@taller.com', 'ACTIVE', NOW() - INTERVAL '30 days', NOW()),
-    (2, 'V-20456789', 'mecanico_jefe', 'Javier', 'Zambrano', '$2b$12$KIX/x8k1.hashSimuladoMeca88', '0424-7112233', 'j.zambrano@taller.com', 'ACTIVE', NOW() - INTERVAL '25 days', NOW()),
-    (3, 'V-30112233', 'carlos_perez', 'Carlos', 'Pérez', '$2b$12$KIX/x8k1.hashSimuladoCli01', '0412-5556677', 'carlos.perez@email.com', 'ACTIVE', NOW() - INTERVAL '5 days', NOW() - INTERVAL '1 day'),
-    (3, 'V-28990011', 'elena_gomez', 'Elena', 'Gómez', '$2b$12$KIX/x8k1.hashSimuladoCli02', '0416-8889900', 'elena.gomez@email.com', 'ACTIVE', NOW() - INTERVAL '2 days', NOW()),
+    (1, 'V-15890123', 'admin_taller', 'Roberto', 'Méndez', '$2b$12$KIX/x8k1.hashSimuladoAdmin99', '0414-7001122', 'admin@taller.com', 'ACTIVE', NOW() - INTERVAL '30 days', NOW(), NOW() - INTERVAL '30 days'),
+    (2, 'V-20456789', 'mecanico_jefe', 'Javier', 'Zambrano', '$2b$12$KIX/x8k1.hashSimuladoMeca88', '0424-7112233', 'j.zambrano@taller.com', 'ACTIVE', NOW() - INTERVAL '25 days', NOW(), NOW() - INTERVAL '30 days'),
+    (3, 'V-30112233', 'carlos_perez', 'Carlos', 'Pérez', '$2b$12$KIX/x8k1.hashSimuladoCli01', '0412-5556677', 'carlos.perez@email.com', 'ACTIVE', NOW() - INTERVAL '5 days', NOW() - INTERVAL '1 day', NOW() - INTERVAL '30 days'),
+    (3, 'V-28990011', 'elena_gomez', 'Elena', 'Gómez', '$2b$12$KIX/x8k1.hashSimuladoCli02', '0416-8889900', 'elena.gomez@email.com', 'ACTIVE', NOW() - INTERVAL '2 days', NOW(), NOW() - INTERVAL '30 days'),
     (1, 'V-18234567', 'gerencia_taller', 'Marcos', 'Contreras', '$2b$12$KIX/x8k1.hashSimuladoAdmin02', '0414-7223344', 'm.contreras@taller.com', 'ACTIVE', '2026-10-08 08:30:00', '2026-11-04 16:20:15', '2026-11-04 16:20:15'),
     (2, 'V-22345678', 'mecanico_pedro', 'Pedro', 'Ramírez', '$2b$12$KIX/x8k1.hashSimuladoMeca02', '0424-7334455', 'p.ramirez@taller.com', 'ACTIVE', '2026-10-12 07:45:00', '2026-11-04 18:10:00', '2026-11-04 18:10:00'),
     (2, 'V-25112244', 'mecanico_luis', 'Luis', 'Hernández', '$2b$12$KIX/x8k1.hashSimuladoMeca03', '0412-7445566', 'l.hernandez@taller.com', 'ACTIVE', '2026-10-15 08:00:00', '2026-11-04 17:55:30', '2026-11-04 17:55:30'),
