@@ -1,0 +1,233 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum service_state {
+  RECEIVED
+  IN_DIAGNOSIS
+  BUDGET_PENDING
+  WAITING_FOR_PARTS
+  IN_REPAIR
+  FINISHED
+  DELIVERED
+}
+
+enum budget_state {
+  DRAFT
+  SENT
+  APPROVED
+  REJECTED
+}
+
+enum replacement_state {
+  REQUESTED
+  DELIVERED_BY_CUSTOMER
+  INSTALLED
+}
+
+enum alert_type {
+  STATE_CHANGE
+  BUDGET_READY
+  PART_REQUIRED
+  READY_FOR_PICKUP
+  DELIVERY_CONFIRMATION
+}
+
+enum countries {
+  EEUU
+  ITALY
+  JAPAN
+  GERMANY
+  FRANCE
+}
+
+enum vehicle_category {
+  SEDAN
+  SPORT
+  COMPACT
+  VAN
+}
+
+enum permissions {
+  READ
+  READ_WRITE
+  MANAGE
+}
+
+enum charges {
+  ADMINISTRATOR
+  CUSTOMER
+  MECHANIC
+}
+
+enum users_state {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+  SUSPEND
+}
+
+model role {
+  id         Int         @id @default(autoincrement())
+  charge     charges     @default(CUSTOMER)
+  permission permissions @default(READ)
+  users      users[]
+}
+
+model users {
+  id                  Int            @id @default(autoincrement())
+  role_id             Int?
+  id_card             String         @unique @db.VarChar(10)
+  username            String         @unique @db.VarChar(50)
+  first_name          String         @db.VarChar(30)
+  last_name           String         @db.VarChar(30)
+  password_hash       String         @db.VarChar(255)
+  phone_number        String?        @db.VarChar(15)
+  email               String         @unique @db.VarChar(100)
+  state               users_state    @default(ACTIVE)
+  creation_date       DateTime?      @default(now()) @db.Timestamp(6)
+  last_access         DateTime?      @db.Timestamp(6)
+  last_update         DateTime?      @default(now()) @db.Timestamp(6)
+  role                role?          @relation(fields: [role_id], references: [id], onDelete: SetNull)
+  record_state        record_state[]
+  services_customer   service[]      @relation("service_customer")
+  services_responsible service[]     @relation("service_responsible")
+}
+
+model brand {
+  id             Int       @id @default(autoincrement())
+  name           String    @unique @db.VarChar(50)
+  country_origin countries @default(JAPAN)
+  model          model[]
+}
+
+model model {
+  id       Int              @id @default(autoincrement())
+  brand_id Int
+  name     String           @db.VarChar(50)
+  category vehicle_category @default(SEDAN)
+  brand    brand            @relation(fields: [brand_id], references: [id], onDelete: Restrict)
+  vehicle  vehicle[]
+}
+
+model vehicle {
+  plate    String    @id @db.VarChar(15)
+  model_id Int
+  year     Int?
+  color    String?   @db.VarChar(30)
+  model    model     @relation(fields: [model_id], references: [id], onDelete: Restrict)
+  service  service[]
+}
+
+model catalog_service {
+  id              Int             @id @default(autoincrement())
+  description     String          @db.VarChar(255)
+  reference_price Decimal         @db.Decimal(12, 2)
+  state_active    Boolean         @default(true)
+  budget_detail   budget_detail[]
+}
+
+model service {
+  id                      Int                      @id @default(autoincrement())
+  tracking_code           String                   @unique @db.VarChar(50)
+  id_customer             Int
+  id_responsible          Int?
+  vehicle_plate           String                   @db.VarChar(15)
+  current_state           service_state            @default(RECEIVED)
+  reason_admission        String?                  @db.VarChar(100)
+  entry_mileage           Int?
+  entry_date              DateTime                 @default(now()) @db.Timestamp(6)
+  estimated_delivery_date DateTime?                @db.Timestamp(6)
+  delivery_date           DateTime?                @db.Timestamp(6)
+  confirmed_delivery      Boolean                  @default(false)
+  customer                users                    @relation("service_customer", fields: [id_customer], references: [id], onDelete: Restrict)
+  responsible             users?                   @relation("service_responsible", fields: [id_responsible], references: [id], onDelete: SetNull)
+  vehicle                 vehicle                  @relation(fields: [vehicle_plate], references: [plate], onDelete: Restrict)
+  previous_external_work  previous_external_work[]
+  record_state            record_state[]
+  budget                  budget[]
+  parts_list              parts_list[]
+  notification            notification[]
+
+  @@index([id_customer], map: "idx_service_customer")
+  @@index([id_responsible], map: "idx_service_responsible")
+  @@index([vehicle_plate], map: "idx_service_plate")
+}
+
+model previous_external_work {
+  id               Int       @id @default(autoincrement())
+  service_id       Int
+  workshop_name    String?   @db.VarChar(100)
+  description      String
+  approximate_date DateTime? @db.Date
+  service          service   @relation(fields: [service_id], references: [id], onDelete: Cascade)
+}
+
+model record_state {
+  id          Int           @id @default(autoincrement())
+  id_service  Int
+  state       service_state @default(RECEIVED)
+  change_date DateTime      @default(now()) @db.Timestamp(6)
+  id_staff    Int?
+  comment     String?       @db.VarChar(100)
+  service     service       @relation(fields: [id_service], references: [id], onDelete: Cascade)
+  staff       users?        @relation(fields: [id_staff], references: [id], onDelete: SetNull)
+
+  @@index([id_service], map: "idx_record_state_service")
+}
+
+model budget {
+  id            Int             @id @default(autoincrement())
+  id_service    Int
+  version       Int             @default(1)
+  state         budget_state    @default(DRAFT)
+  issue_date    DateTime        @default(now()) @db.Timestamp(6)
+  response_date DateTime?       @db.Timestamp(6)
+  comments      String?
+  service       service         @relation(fields: [id_service], references: [id], onDelete: Cascade)
+  budget_detail budget_detail[]
+
+  @@index([id_service], map: "idx_budget_service")
+}
+
+model budget_detail {
+  id              Int             @id @default(autoincrement())
+  budget_id       Int
+  catalog_id      Int
+  quantity        Int             @default(1)
+  applied_cost    Decimal         @db.Decimal(12, 2)
+  budget          budget          @relation(fields: [budget_id], references: [id], onDelete: Cascade)
+  catalog_service catalog_service @relation(fields: [catalog_id], references: [id], onDelete: Restrict)
+
+  @@index([budget_id], map: "idx_budget_detail_budget")
+}
+
+model parts_list {
+  id            Int               @id @default(autoincrement())
+  id_service    Int
+  part_name     String            @db.VarChar(100)
+  specification String?           @db.VarChar(150)
+  quantity      Int               @default(1)
+  state         replacement_state @default(REQUESTED)
+  service       service           @relation(fields: [id_service], references: [id], onDelete: Cascade)
+
+  @@index([id_service], map: "idx_parts_list_service")
+}
+
+model notification {
+  id                Int        @id @default(autoincrement())
+  id_service        Int
+  type              alert_type
+  destination_email String     @db.VarChar(100)
+  message           String?
+  sent_date         DateTime?  @db.Timestamp(6)
+  sent              Boolean    @default(false)
+  service           service    @relation(fields: [id_service], references: [id], onDelete: Cascade)
+
+  @@index([id_service], map: "idx_notification_service")
+}

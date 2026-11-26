@@ -1,0 +1,34 @@
+@baseUrl = http://localhost:3000
+
+### 1. Health Check (Express + PostgreSQL)
+GET {{baseUrl}}/api/health
+
+### 2. Registro de usuario (Cliente)
+# @name registerReq
+POST {{baseUrl}}/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "id_card": "V-29112233",
+  "username": "nuevo_cliente",
+  "first_name": "Lucia",
+  "last_name": "Mendoza",
+  "email": "lucia.mendoza@email.com",
+  "password": "Password123!",
+  "phone_number": "0414-5551234"
+}
+
+### 3. Inicio de sesión (acepta email, username o identifier)
+# @name loginReq
+POST {{baseUrl}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "lucia.mendoza@email.com",
+  "password": "Password123!"
+}
+
+### 4. Obtener perfil autenticado (requiere JWT del login/register)
+@token = {{loginReq.response.body.data.token}}
+GET {{baseUrl}}/api/v1/auth/me
+Authorization: Bearer {{token}}
